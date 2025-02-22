@@ -503,6 +503,22 @@ services:
     ports:
       - '${EXPOSE_DB_PORT:-5432}:5432'
 
+
+  # The redis cache.
+  redis:
+    image: redis:6-alpine
+    restart: always
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:-difyai123456}
+    volumes:
+      # Mount the redis data directory to the container.
+      - ./volumes/redis/data:/data
+    # Set the redis password when startup redis server.
+    command: redis-server --requirepass ${REDIS_PASSWORD:-difyai123456}
+    healthcheck:
+      test: [ 'CMD', 'redis-cli', 'ping' ]
+
+
   # The DifySandbox
   sandbox:
     image: langgenius/dify-sandbox:0.2.10
